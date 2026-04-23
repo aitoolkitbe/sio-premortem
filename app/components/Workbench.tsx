@@ -52,8 +52,19 @@ export function Workbench() {
         body: JSON.stringify(ctx),
       });
       if (!res.ok) {
-        const body = await res.json().catch(() => ({ error: 'Fout' }));
-        throw new Error(body.error || 'Analyse mislukt');
+        const raw = await res.text();
+        let msg = `Server gaf status ${res.status}.`;
+        try {
+          const body = JSON.parse(raw);
+          if (body?.error) msg = body.error;
+        } catch {
+          // geen JSON — toon de ruwe tekst zodat we zien wat Vercel teruggaf
+          if (raw.trim()) msg = `${msg} ${raw.slice(0, 300)}`;
+        }
+        if (res.status === 504 || /timeout/i.test(raw)) {
+          msg += ' — De call duurde te lang voor Vercel. Probeer een korter bericht, of schakel over naar Haiku via de env var ANTHROPIC_MODEL.';
+        }
+        throw new Error(msg);
       }
       const body = (await res.json()) as { report: AnalysisReport };
       setContext(ctx);
