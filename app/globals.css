@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  background: #fafaf7;
+  color: #1a1a1a;
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  font-family: Georgia, Cambria, 'Times New Roman', serif;
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: #8a5a3b;
+  color: #fafaf7;
+}
+
+/* Scanbare tabelstijl voor rapportage */
+table.pm {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+table.pm th,
+table.pm td {
+  padding: 0.65rem 0.8rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid #e5e3dc;
+}
+table.pm th {
+  background: #f3f2ed;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #4a4a4a;
+}
+
+/* Print styling voor rapport-export */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+  .avoid-break {
+    page-break-inside: avoid;
+  }
+  table.pm th {
+    background: #f5f5f5 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+.print-only {
+  display: none;
+}
+
+/* Kleine utility voor zachte kaarten */
+.card {
+  background: white;
+  border: 1px solid #e5e3dc;
+  border-radius: 6px;
+  padding: 1.25rem 1.5rem;
+}
+
+/* Eenvoudige prose overrides */
+.prose-pm p {
+  margin: 0.6em 0;
+  line-height: 1.6;
+}
+.prose-pm strong {
+  color: #1a1a1a;
+}
