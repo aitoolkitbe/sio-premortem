@@ -11,54 +11,68 @@ const ANALYSE_INSTRUCTIONS = `
 
 Analyseer het onderstaande interne bericht volgens het vier-lagen kader. Lever één enkel JSON-object in het exacte schema hieronder. Geen inleiding, geen uitleiding, geen markdown-codeblokken. Alleen valide JSON.
 
-### JSON-schema
+### JSON-schema met STRIKTE lengtelimieten
 
 {
   "samenvatting": {
     "landingsscore": number (0-10, streng: 3-6 is normaal),
     "bridgesFase": "Ending" | "Neutral Zone" | "New Beginning",
     "adkarBarriere": "Awareness" | "Desire" | "Knowledge" | "Ability" | "Reinforcement",
-    "grootsteRisico": string (één zin),
-    "kernadvies": string (2-3 zinnen)
+    "grootsteRisico": string (MAX 18 woorden, ÉÉN zin, concreet benoemd niet in metafoor),
+    "kernadvies": string (MAX 30 woorden, MAX 2 zinnen, praktisch en uitvoerbaar)
   },
-  "wandelgangversie": string (de koffieautomaat-versie — in spreektaal, kort, mogelijk vervormd, zoals medewerkers het morgen aan elkaar zullen navertellen. Gebruik citaat-achtige spreektaal.),
+  "wandelgangversie": string (MAX 60 woorden. Spreektaal van een medewerker die het doorvertelt. Mag vervormd zijn.),
   "probleemZinnen": [
     {
-      "zin": string (exact citaat uit het bericht),
+      "zin": string (EXACT citaat uit het bericht, max 25 woorden — kort indien nodig),
       "mechanisme": "Reactantie" | "Loss aversion" | "Contractbreuk" | "Cognitieve overload" | "Framing" | "Urgency fatigue" | "Afzender-mismatch" | "Serial position",
       "risico": "hoog" | "middel" | "laag",
-      "toelichting": string (waarom problematisch, met verwijzing naar mechanisme),
-      "wieRaaktHet": string (welke doelgroep(en) het hardst geraakt)
+      "toelichting": string (MAX 20 woorden, ÉÉN zin. Benoem het probleem direct. Geen metafoor.),
+      "wieRaaktHet": string (MAX 10 woorden, rolbenaming van doelgroep)
     }
-    // MINSTENS 4 items
+    // 4 tot 5 items
   ],
   "vervolgVragen": [
     {
-      "vraag": string (in spreektaal, zoals echt gesteld),
-      "wie": string (welk type medewerker),
-      "wanneer": string (direct / de dag erna / bij de koffieautomaat / in teamoverleg / bij de vakbond),
-      "waaromOnbeantwoord": string (waarom het bericht deze vraag niet beantwoordt)
+      "vraag": string (spreektaal, MAX 15 woorden, zoals echt gesteld),
+      "wie": string (rolbenaming, MAX 8 woorden),
+      "wanneer": string (MAX 8 woorden: bv. 'direct', 'morgen bij koffie', 'bij volgende vakbondsoverleg'),
+      "waaromOnbeantwoord": string (MAX 18 woorden, ÉÉN zin, direct)
     }
-    // MINSTENS 5 items
+    // 5 items exact
   ],
   "herschrijfSuggesties": [
     {
-      "origineel": string (zin uit het bericht),
-      "suggestie": string (betere versie),
-      "waarom": string (welk probleem opgelost + welk mechanisme)
+      "origineel": string (EXACTE zin uit het bericht),
+      "suggestie": string (MAX 45 woorden, behoud registertoon van originele bericht),
+      "waarom": string (MAX 20 woorden, ÉÉN zin. Benoem welk mechanisme opgelost wordt.)
     }
-    // MINSTENS 3 items
+    // 3 items exact
   ]
 }
 
 ### Regels
 
+- De lengtelimieten zijn HARD. Overschrijding = herschrijf.
 - Spreektaal waar het past (wandelgangversie, vervolgvragen).
-- Gemeten taal waar het past (samenvatting, toelichting).
+- Gemeten taal waar het past (samenvatting, toelichting, waarom-velden).
+- Pas de ANTI-SLOP REGELS uit de kennisbasis consequent toe. Elke toelichting scannen op verboden patronen voor je ze oplevert.
 - Weeg de veranderhistorie zwaar mee: bij "de zoveelste verandering" krijgt urgency fatigue meer gewicht.
 - Bij een overheidscontext: vakbondsreflex en procedure-gevoeligheid meenemen.
 - Bij zorg/productie: taalniveau en fysiek leesmoment meenemen.
-- Geen algemeenheden. Elke diagnose verwijst naar een mechanisme of onderzoeksresultaat.
+- Geen algemeenheden. Elke diagnose verwijst naar een mechanisme.
+
+### Goede voorbeelden (zo wel)
+
+- grootsteRisico: "Langdienstverbanders zien geen signaal dat hun rol na de transitie zekerheid krijgt."
+- toelichting: "Het woord 'vastbesloten' sluit elke dialoog af voor ze begint."
+- kernadvies: "Voeg één zin toe waarin Luc persoonlijk het team bedankt. Verplaats de 100-dagen-actielijst naar de openingsalinea."
+
+### Slechte voorbeelden (NIET zo)
+
+- grootsteRisico: "Medewerkers voelen zich buitengesloten — niet als deelnemers maar als toeschouwers." ← em-dash + contrast-formule verboden
+- toelichting: "Het bericht zwijgt over continuïteit voor medewerkers. Dit triggert onbewust de vraag: 'Waarom worden partners genoemd en wij niet?' Het zwijgen is luider dan het zeggen." ← 'Het bericht' opening + vraag-in-citaat + proverbe = triple slop
+- kernadvies: "Het bericht is technisch solide maar emotioneel afstandelijk." ← parallellisme verboden
 `;
 
 export function buildAnalysisMessages(ctx: AnalysisContext): {
